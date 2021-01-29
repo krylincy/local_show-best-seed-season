@@ -1,6 +1,11 @@
 local PLANT_DEFS = require("prefabs/farm_plant_defs").PLANT_DEFS
 
 local displayFormat = GetModConfigData("displayFormat")
+local displayNutrition = GetModConfigData("displayNutrition")
+
+local function displayNutritionString(value)
+	return value == 0 and "+" or value
+end
 
 for k, v in pairs(PLANT_DEFS) do	
 	if v.product then 
@@ -23,7 +28,17 @@ for k, v in pairs(PLANT_DEFS) do
 			end
 		end
 		
-		fullSeasonString = fullSeasonString..")"
+		local consumeString = ""
+		
+		if displayNutrition == 1 then 
+			local formular = displayNutritionString(v.nutrient_consumption[1])
+			local compost = displayNutritionString(v.nutrient_consumption[2])
+			local manure = displayNutritionString(v.nutrient_consumption[3])
+		
+			consumeString = " | "..formular..compost..manure
+		end
+				
+		fullSeasonString = fullSeasonString..consumeString..")"
 			
 		AddPrefabPostInit(v.product.."_seeds", function(inst)
 			inst.displaynamefn = function (inst)
